@@ -269,8 +269,8 @@ sess.run(tf.global_variables_initializer())
 tf.local_variables_initializer().run(session = sess)
 saver = tf.train.Saver()
 run_loss = []
-#saver.restore(sess, '/home/ubuntu/cnn_thirddig_wide')
-
+saver.restore(sess, '/home/ubuntu/cnn_all_db_wide')
+'''
 for i in range(0, 10000000):
     print('iter', i)
     X, y = next(gen)
@@ -290,7 +290,7 @@ for i in range(0, 10000000):
     #print(s)
     sys.stdout.flush()
 
-
+'''
 
 data_lab = []
 
@@ -309,14 +309,19 @@ for fi in os.listdir(test_path):
         print(data_lab[int(fi[0:-4])])
         im = mpimg.imread(test_path + '/' + fi)
         im = np.reshape(im, (1, 200, 400, 3))
-        la = np.zeros((36,))
-        la = np.reshape(la, (1, 36))
+        la = np.zeros((36*4,))
+        la = np.reshape(la, (1, 36*4))
         soft = sess.run([dl], feed_dict = {imagepl : im, labelspl : la})
-        print(soft[0])
-        print(np.argmax(soft[0], 1))
-        pr = rev_alph_dict[np.argmax(soft[0], 1)[0]]
-        print(pr)
-        if data_lab[int(fi[0:-4])][2] == pr:
+        #print('soft is', soft)
+        #print('soft 0 is ', soft[0])
+        #print(soft[0][0])
+        #print(np.argmax(soft[0][0], 1))
+        pr = rev_alph_dict[np.argmax(soft[0][0], 1)[0]]
+        pr2 = rev_alph_dict[np.argmax(soft[0][1], 1)[0]]
+        pr3 = rev_alph_dict[np.argmax(soft[0][2], 1)[0]]
+        pr4 = rev_alph_dict[np.argmax(soft[0][3], 1)[0]]
+        print(pr, pr2, pr3, pr4)
+        if data_lab[int(fi[0:-4])][0] == pr and data_lab[int(fi[0:-4])][1] == pr2 and data_lab[int(fi[0:-4])][2] == pr3 and data_lab[int(fi[0:-4])][3] == pr4:
             test_acc += 1
         total += 1
         print(test_acc/total)
